@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2> View Books</h2>
+
+<div class="card shadow mt-3">
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>1</td>
+                <td>Pyhton Basics</td>
+                <td>John Smith</td>
+                <td>Programming</td>
+                <td>Available</td>
+                <td>8</td>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
