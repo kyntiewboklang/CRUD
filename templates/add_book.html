@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <h2>Add New Book</h2>
+
+    <form action="/add_book" method="POST">
+        <div class="mb-3">
+            <label for="title" class="form-label">Book Title</label>
+            <input
+                type="text"
+                class="form-control"
+                id="title"
+                name="title"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="author" class="form-label">Author</label>
+            <input
+                type="text"
+                class="form-control"
+                id="author"
+                name="author"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="isbn" class="form-label">ISBN</label>
+            <input
+                type="text"
+                class="form-control"
+                id="isbn"
+                name="isbn"
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input
+                type="text"
+                class="form-control"
+                id="category"
+                name="category"
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input
+                type="number"
+                class="form-control"
+                id="quantity"
+                name="quantity"
+                min="1"
+                value="1"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Add Book
+        </button>
+    </form>
+</div>
+
+{% endblock %}
