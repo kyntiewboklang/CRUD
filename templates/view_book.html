@@ -3,7 +3,7 @@
 {% block content %}
 
 <h2> View Books</h2>
-
+<form method="GET">
 <div class="card shadow mt-3">
     <div class="card-body">
         <table class="table table-bordered table-striped">
@@ -14,19 +14,28 @@
                     <th>Author</th>
                     <th>Category</th>
                     <th>Status</th>
-                    <th>Quantity</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <td>1</td>
-                <td>Pyhton Basics</td>
-                <td>John Smith</td>
-                <td>Programming</td>
-                <td>Available</td>
-                <td>8</td>
+                {% for book in books %}
+                <tr>
+                <td>{{ book[0] }}</td>
+                <td>{{ book[1] }}</td>
+                <td>{{ book[2] }}</td>
+                <td>{{ book[3] }}</td>
+                <td>{{ book[4] }}</td>
+
+                <td>
+                    <a href="/edit-book/{{ book[0] }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="/delete-book/{{ book[0] }}" class="btn btn-danger btn-sm">delete</a>
+                </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+</form>
 
 {% endblock %}

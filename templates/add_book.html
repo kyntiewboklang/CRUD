@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h2>Add New Book</h2>
 
-    <form action="/add_book" method="POST">
+    <form method="POST">
         <div class="mb-3">
             <label for="title" class="form-label">Book Title</label>
             <input
@@ -14,6 +14,7 @@
                 class="form-control"
                 id="title"
                 name="title"
+                placeholder="Enter book name"
                 required
             >
         </div>
@@ -30,39 +31,29 @@
         </div>
 
         <div class="mb-3">
-            <label for="isbn" class="form-label">Category</label>
-            <input
-                type="text"
-                class="form-control"
-                id="isbn"
-                name="isbn"
-            >
-        </div>
-
-        <div class="mb-3">
-            <label for="category" class="form-label">Status</label>
+            <label for="category" class="form-label">Category</label>
             <input
                 type="text"
                 class="form-control"
                 id="category"
                 name="category"
-            >
-        </div>
-
-        <div class="mb-3">
-            <label for="quantity" class="form-label">Quantity</label>
-            <input
-                type="number"
-                class="form-control"
-                id="quantity"
-                name="quantity"
-                min="1"
-                value="1"
                 required
             >
         </div>
 
-        <button type="submit" class="btn btn-primary">
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select
+                class="form-select" required
+                id="status"
+                name="status"
+            >
+            <option>Available</option>
+            <option>Issued</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">
             Add Book
         </button>
     </form>
