@@ -14,6 +14,7 @@
                 class="form-control"
                 id="title"
                 name="title"
+                value="{{ book[1] }}"
                 placeholder="Enter book name"
                 required
             >
@@ -26,6 +27,7 @@
                 class="form-control"
                 id="author"
                 name="author"
+                value="{{ book[2] }}"
                 required
             >
         </div>
@@ -37,6 +39,7 @@
                 class="form-control"
                 id="category"
                 name="category"
+                value="{{ book[3] }}"
                 required
             >
         </div>
@@ -48,8 +51,8 @@
                 id="status"
                 name="status"
             >
-            <option>Available</option>
-            <option>Issued</option>
+            <option value="Available" {% if book[4] == 'Available' %}selected{% endif %}>Available</option>
+            <option  value="Issued" {% if book[4] == 'Issued' %}selected{% endif %}>Issued</option>
             </select>
         </div>
 

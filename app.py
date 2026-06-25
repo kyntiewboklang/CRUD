@@ -74,6 +74,59 @@ def view_book():
 
     return render_template("view_book.html", books=books)
 
+@app.route("/delete-book/<int:id>")
+def delete_book(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM books WHERE id =%s", (id,))
+    
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/view_book")
+
+@app.route("/edit-book/<int:id>", methods=["GET", "POST"])
+def edit_book(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        author = request.form["author"]
+        category = request.form["category"]
+        status = request.form["status"]
+
+        cursor.execute("""
+            UPDATE books
+            SET title=%s,
+                author=%s,
+                category=%s,
+                status=%s
+            WHERE id=%s
+        """, (title, author, category, status, id))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect("/view_book")
+
+    cursor.execute("SELECT * FROM books WHERE id = %s", (id,))
+    book = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if book is None:
+        return "Book not found", 404
+
+    return render_template("add_book.html", book=book)
+
+
+
 if __name__ == "__main__":  #important code, it is use for running the app
     create_table() 
     app.run(debug=True)
