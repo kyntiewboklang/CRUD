@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-box">
+
+        <h1>Library System</h1>
+        <p class="subtitle">Please Register here</p>
+
+        <form action="/register" method="POST">
+
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter username"
+                required
+            >
+            <label>Email</label>
+            <input
+                type="text"
+                name="email"
+                placeholder="Enter email"
+                required
+            >
+
+            <label>Password</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter password"
+                required
+            >
+
+            <label>Confirm Password</label>
+            <input
+                type="text"
+                name="password"
+                placeholder="Enter password again"
+                required
+            >
+
+            <button type="submit" class="btn-login">
+                Register
+            </button>
+
+            <a href="/">Already registered. return to login</a>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

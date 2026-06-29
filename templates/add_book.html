@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h2>Add New Book</h2>
 
-    <form method="POST">
+    <form action="/add-book" method="POST">
         <div class="mb-3">
             <label for="title" class="form-label">Book Title</label>
             <input
@@ -14,7 +14,7 @@
                 class="form-control"
                 id="title"
                 name="title"
-                value="{{ book[1] }}"
+                value="{{ book[1] if book is defined else '' }}"
                 placeholder="Enter book name"
                 required
             >
@@ -27,7 +27,8 @@
                 class="form-control"
                 id="author"
                 name="author"
-                value="{{ book[2] }}"
+                placeholder="Enter author"
+                value="{{ book[2] if book is defined else '' }}"
                 required
             >
         </div>
@@ -39,7 +40,8 @@
                 class="form-control"
                 id="category"
                 name="category"
-                value="{{ book[3] }}"
+                placeholder="Which Category"
+                value="{{ book[3] if book is defined else '' }}"
                 required
             >
         </div>
@@ -51,8 +53,8 @@
                 id="status"
                 name="status"
             >
-            <option value="Available" {% if book[4] == 'Available' %}selected{% endif %}>Available</option>
-            <option  value="Issued" {% if book[4] == 'Issued' %}selected{% endif %}>Issued</option>
+            <option value="Available"{% if book is defined and book[4] == 'Available' %}selected{% endif %}>Available</option>
+            <option value="Issued"{% if book is defined and book[4] == 'Issued' %}selected{% endif %}>Issued</option>
             </select>
         </div>
 

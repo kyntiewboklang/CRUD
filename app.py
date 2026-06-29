@@ -32,9 +32,81 @@ def create_table():
 
     print("Books table created successfully")
 
-@app.route("/")
+def create_user():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            password VARCHAR(50) NOT NULL
+        )
+    """)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print("users table created successfully")
+
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT * FROM users
+            WHERE username=%s AND password=%s
+        """, (username, password))
+
+        user = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        print("user found:", user)
+
+        if user:
+            return redirect("/home")
+        else:
+            return "Invalid credentials"
+
+    return render_template("login.html")
+
+@app.route("/register", methods=["GET","POST"])
+def register():
+    if request.method=="POST":
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        print(username, email, password)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+                       INSERT INTO users (username, email, password)
+                       VALUES (%s, %s, %s)
+                       """ , (username, email, password))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        print("User registration successful")
+    return render_template("register.html")
+
+@app.route("/home")
 def home():
     return render_template("index.html")
+
 
 @app.route("/add-book", methods=["GET","POST"])
 def add_book():
@@ -129,4 +201,5 @@ def edit_book(id):
 
 if __name__ == "__main__":  #important code, it is use for running the app
     create_table() 
+    create_user()
     app.run(debug=True)
