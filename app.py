@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for
+from werkzeug.security import generate_password_hash,check_password_hash 
 import psycopg2
 
 app = Flask(__name__)
+
+app.secret_key="your_secret_key_here"
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -41,7 +44,7 @@ def create_user():
             id SERIAL PRIMARY KEY,
             username VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL,
-            password VARCHAR(50) NOT NULL
+            password VARCHAR(255) NOT NULL
         )
     """)
 
@@ -62,20 +65,21 @@ def login():
 
         cursor.execute("""
             SELECT * FROM users
-            WHERE username=%s AND password=%s
-        """, (username, password))
+            WHERE username=%s
+        """, (username,))
 
         user = cursor.fetchone()
 
         cursor.close()
         conn.close()
 
-        print("user found:", user)
-
-        if user:
+        if user and check_password_hash(user[3], password):
+            session["user_id"] = user[0]
+            session["username"] = user[1]
+            session["email"] = user[2]
             return redirect("/home")
-        else:
-            return "Invalid credentials"
+
+        return "Invalid credentials"
 
     return render_template("login.html")
 
@@ -85,6 +89,11 @@ def register():
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
+        confirm_password=request.form["confirm_password"]
+        if password!=confirm_password:
+            return "Password does not match"
+
+        hashed_password = generate_password_hash(password)
 
         print(username, email, password)
 
@@ -94,7 +103,7 @@ def register():
         cursor.execute("""
                        INSERT INTO users (username, email, password)
                        VALUES (%s, %s, %s)
-                       """ , (username, email, password))
+                       """ , (username, email,hashed_password))
         
         conn.commit()
         cursor.close()
@@ -103,13 +112,83 @@ def register():
         print("User registration successful")
     return render_template("register.html")
 
+@app.route("/forget_password", methods=["GET", "POST"])
+def forget_password():
+    
+    message = ""
+    category = ""
+
+    if request.method == "POST":
+        email = request.form["email"]
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT * 
+            FROM users
+            WHERE email = %s
+        """, (email,))
+
+        user = cursor.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        if user:
+            return redirect(f"/reset-password/{email}")
+        else:
+            message = "User does not have an account."
+            category = "danger"
+
+    return render_template("forget_password.html", message=message, category=category)
+
+@app.route("/reset-password/<email>", methods=["GET", "POST"])
+def reset_password(email):
+    if request.method == "POST":
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+
+        if new_password != confirm_password:
+            return "Password does not match"
+        
+        hashed_password = generate_password_hash(new_password)
+
+        conn = get_db_connection()
+        cursor = conn.cursor() 
+
+        cursor.execute("""
+            UPDATE users SET password = %s WHERE email =%s
+                    """, (hashed_password, email))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect("/")
+
+    return render_template("reset_password.html")
+
 @app.route("/home")
 def home():
+
+    if "user_id" not in session:
+        return redirect("/")
+
     return render_template("index.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
 
 
 @app.route("/add-book", methods=["GET","POST"])
 def add_book():
+    if "user_id" not in session:
+        return redirect("/")
+
     if request.method=="POST":
         title = request.form["title"]
         author = request.form["author"]
@@ -135,6 +214,10 @@ def add_book():
 
 @app.route("/view_book")
 def view_book():
+    if "user_id" not in session:
+        return redirect("/")
+
+
     conn = get_db_connection()
     cursor = conn.cursor() 
 
@@ -202,4 +285,5 @@ def edit_book(id):
 if __name__ == "__main__":  #important code, it is use for running the app
     create_table() 
     create_user()
+    print(app.url_map)
     app.run(debug=True)
