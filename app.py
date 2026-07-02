@@ -1,10 +1,24 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash,check_password_hash 
 import psycopg2
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 
 app.secret_key="your_secret_key_here"
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+
+app.config["MAIL_USERNAME"] = "riselucky30@gmail.com"
+app.config["MAIL_PASSWORD"] = "mvgw itrm guqi koix"
+app.config["MAIL_DEFAULT_SENDER"]= "riselucky30@gmail.com"
+
+mail = Mail(app)
+
+serializer = URLSafeTimedSerializer(app.secret_key)
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -56,6 +70,8 @@ def create_user():
 
 @app.route("/", methods=["GET", "POST"])
 def login():
+    message = ""
+    category = ""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -79,9 +95,10 @@ def login():
             session["email"] = user[2]
             return redirect("/home")
 
-        return "Invalid credentials"
+        message = "Invalid credentials"
+        category = "danger"
 
-    return render_template("login.html")
+    return render_template("login.html", message=message, category=category)
 
 @app.route("/register", methods=["GET","POST"])
 def register():
@@ -136,15 +153,44 @@ def forget_password():
         conn.close()
 
         if user:
-            return redirect(f"/reset-password/{email}")
+            token = serializer.dumps(email)
+
+            reset_link = f"http://127.0.0.1:5000/reset-password/{token}"
+
+            msg = Message(
+                subject = "BookNest PAssword Reset",
+                recipients=[email]
+            )
+            msg.body = f"""
+                Hello,
+
+                You have requested to reset your password.
+
+                Click on the link below:
+
+                {reset_link}
+
+                This link expires in 15 minutes.
+            """
+            mail.send(msg)
+
+            message = "A password reset link has been sent to your email sucessfully."
+            category = "success"
+
         else:
             message = "User does not have an account."
             category = "danger"
 
     return render_template("forget_password.html", message=message, category=category)
 
-@app.route("/reset-password/<email>", methods=["GET", "POST"])
-def reset_password(email):
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, max_age=900)
+
+    except:
+        return "Invalid or expired link"
+
     if request.method == "POST":
         new_password = request.form["new_password"]
         confirm_password = request.form["confirm_password"]
@@ -167,7 +213,7 @@ def reset_password(email):
 
         return redirect("/")
 
-    return render_template("reset_password.html")
+    return render_template("reset_password.html", token=token)
 
 @app.route("/home")
 def home():

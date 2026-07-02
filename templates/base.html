@@ -20,10 +20,10 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="/home">Home</a>
-        <a class="nav-link active" aria-current="page" href="/view_book">View Books</a>
-        <a class="nav-link active" aria-current="page" href="#">Pricing</a>
-        <a class="nav-link active" aria-current="page"  href="/logout">Log Out</a>
+        <a class="nav-link {{ 'active' if request.path == '/home' else '' }}" href="/home">Home</a>
+        <a class="nav-link {{ 'active' if request.path == '/view_book' else '' }}"" href="/view_book">View Books</a>
+        <a class="nav-link {{ 'active' if request.path == '#' else '' }}"" href="#">Pricing</a>
+        <a class="nav-link {{ 'active' if request.path == '/' else '' }}""  href="/logout">Log Out</a>
       </div>
     </div>
   </div>
@@ -33,5 +33,6 @@
     {% endblock %}
 
 </div>
+
 </body>
 </html>
