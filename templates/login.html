@@ -13,12 +13,7 @@
     <!-- Flask CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <style>
-        body{
-            background: linear-gradient(135deg,#74ebd5,#acb6e5);
-            min-height:100vh;
-        }
-    </style>
+
 </head>
 
 <body class="d-flex justify-content-center align-items-center">
@@ -51,6 +46,12 @@
                 placeholder="Enter password"
                 required>
         </div>
+
+        {% if message %}
+        <div  class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endif %}
         
         <div class="text-end mt-2">
             <a href="/forget_password" class="text-decoration-none small">
