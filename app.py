@@ -258,6 +258,7 @@ def add_book():
         return redirect("/view_book")
     return render_template("add_book.html")
 
+
 @app.route("/view_book")
 def view_book():
     if "user_id" not in session:
@@ -275,19 +276,38 @@ def view_book():
 
     return render_template("view_book.html", books=books)
 
-@app.route("/delete-book/<int:id>")
-def delete_book(id):
-    conn = get_db_connection()
-    cursor = conn.cursor()
+@app.route("/search-books", methods=["GET", "POST"])
+def search_books():
+    if "user_id" not in session:
+        return redirect("/")
 
-    cursor.execute("DELETE FROM books WHERE id =%s", (id,))
-    
-    conn.commit()
+    books = []
 
-    cursor.close()
-    conn.close()
+    if request.method == "POST":
+        keyword = request.form["keyword"]
 
-    return redirect("/view_book")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM books
+            WHERE title ILIKE %s
+               OR author ILIKE %s
+               OR category ILIKE %s
+            ORDER BY id ASC
+        """, (
+            f"%{keyword}%",
+            f"%{keyword}%",
+            f"%{keyword}%"
+        ))
+
+        books = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+    return render_template("search_books.html", books=books)
 
 @app.route("/edit-book/<int:id>", methods=["GET", "POST"])
 def edit_book(id):
@@ -325,6 +345,20 @@ def edit_book(id):
         return "Book not found", 404
 
     return render_template("add_book.html", book=book)
+
+@app.route("/delete-book/<int:id>")
+def delete_book(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM books WHERE id =%s", (id,))
+    
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/view_book")
 
 
 

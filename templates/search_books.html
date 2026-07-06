@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
+</head>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Search Books</h2>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="POST">
+                <div class="row g-3 align-items-center">
+
+                    <div class="col-md-9">
+                        <input
+                            type="text"
+                            name="keyword"
+                            class="form-control"
+                            placeholder="Search by Title, Author, or Category"
+                            required
+                        >
+                    </div>
+                    <div class="col-md-4">
+                        <select name ="category" class="form-select">
+                            <option value="ALL">All Categories</option>
+                            {% for cat in categories %}
+
+                                <option alue="{{ cat[0] }}">{{ cat[0]}}</option>    
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" style="height: 40px;">
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if books %}
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Search Results</h5>
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-bordered table-striped table-hover">
+
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for book in books %}
+                    <tr>
+
+                        <td>{{ book[0] }}</td>
+                        <td>{{ book[1] }}</td>
+                        <td>{{ book[2] }}</td>
+                        <td>{{ book[3] }}</td>
+
+                        <td>
+                            {% if book[4] == "Available" %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Issued</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    {% elif request.method == "POST" %}
+
+    <div class="alert alert-warning">
+        No books found.
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

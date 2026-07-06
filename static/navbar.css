@@ -57,15 +57,10 @@
     background: #f5f7fa;
 }
 
-button.logout_btn {
-    background-color: #4a77d4;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    font-weight: 600;
-    transition: 0.3s;
-    color:white;
-    margin-top: auto;
+
+a.logout_btn {
+    margin-top: 270px;
+    background:  #4a77d4;
 }
 
 .main-content {

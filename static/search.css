@@ -1,0 +1,23 @@
+.search {
+    align-content: center;
+    padding: 20px;
+    padding-right: 50px;
+}
+button{
+    background-color: #4a77d4;
+    border-radius: 10px;
+    padding: 5px;
+    width: 103px;
+}
+input.form-control {
+    width: 500px;
+}
+
+.col-md-4 {
+    width: 200px;
+}
+
+    .col-md-9 {
+        flex: 0 0 auto;
+        width: 56%;
+    }
